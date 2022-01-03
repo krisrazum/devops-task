@@ -1,0 +1,28 @@
+#Setting up vhost + ssl
+- name: Setting up vhost for non SSL
+  template:
+    src: "templates/app-vhost-non-ssl.j2"
+    dest: "/etc/nginx/sites-available/{{ app_domain }}"
+
+- name: Create a symbolic link
+  ansible.builtin.file:
+    src: "/etc/nginx/sites-available/{{ app_domain }}"
+    dest: "/etc/nginx/sites-enabled/{{ app_domain }}"
+    owner: root
+    group: root
+    state: link
+  notify: Reload Nginx
+
+
+- name: Issue letsencrypt certificate
+  command: certbot -d {{ app_domain }} --non-interactive --agree-tos -m {{ certbot_renew_email }} --{{ certbot_plugin }}
+
+- name: Remove old vhost
+  ansible.builtin.file:
+    path: /etc/nginx/sites-available/{{ app_domain }}
+    state: absent
+
+- name: Merge non ssl and ssl vhost into one
+  template:
+    src: "templates/app-vhost-ssl.j2"
+    dest: "/etc/nginx/sites-available/{{ app_domain }}"

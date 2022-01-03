@@ -1,0 +1,11 @@
+server {
+        listen 80;
+        server_name {{ app_domain }};
+
+        access_log  /var/log/nginx/{{ app_domain }}.access.log;
+        error_log  /var/log/nginx/{{ app_domain }}.error.log;
+
+        root   /var/www/html/;
+        index index.html;
+
+}

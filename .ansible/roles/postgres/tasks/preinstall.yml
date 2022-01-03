@@ -1,0 +1,9 @@
+- name: Install packages needed for running postgres
+  apt:
+    pkg:
+      - python3-docker
+      - docker.io
+      - libpq-dev
+      - python3-psycopg2
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

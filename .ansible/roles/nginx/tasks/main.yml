@@ -1,0 +1,4 @@
+---
+- include_tasks: "preinstall.yml"
+- include_tasks: "setup-vhost.yml"
+- include_tasks: "htpasswd.yml"

@@ -1,0 +1,4 @@
+---
+- include_tasks: "preinstall.yml"
+- include_tasks: "add-app-user.yml"
+- include_tasks: "github-runner.yml"

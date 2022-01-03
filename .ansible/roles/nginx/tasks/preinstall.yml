@@ -1,0 +1,11 @@
+- name: Install nginx
+  apt:
+    pkg:
+      - nginx
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Enable service nginx on boot
+  ansible.builtin.service:
+    name: nginx
+    enabled: yes

@@ -1,0 +1,3 @@
+---
+certbot_renew_email: krisrazum@live.com
+certbot_plugin: nginx

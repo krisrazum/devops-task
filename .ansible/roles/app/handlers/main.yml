@@ -1,0 +1,28 @@
+- name: Execute Migrations
+  command: npx sequelize-cli db:migrate && npx sequelize db:seed:all
+  args:
+    chdir: "{{ default_directory }}/{{ app_name }}"
+
+- name: Execute DBSeed
+  command: npx sequelize db:seed:all
+  args:
+    chdir: "{{ default_directory }}/{{ app_name }}"
+
+- name: Start Application
+  command: pm2 start bin/www --name "{{ app_name }}" --env={{ app_environment }}
+  become: yes
+  become_user: "{{ app_name }}"
+  args:
+    chdir: "{{ default_directory }}/{{ app_name }}"
+
+- name: Reload Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+
+- name: Saving the app list to be restored at reboot
+  command: pm2 save
+  become: yes
+  become_user: "{{ app_name }}"
+  args:
+    chdir: "{{ default_directory }}/{{ app_name }}"

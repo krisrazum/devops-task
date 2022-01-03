@@ -1,0 +1,41 @@
+- include_vars: ../../app/defaults/main.yml
+
+- name: Create directories for application
+  ansible.builtin.file:
+    path: "{{ github_runner_location }}"
+    state: directory
+    mode: '0770'
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+
+- name: Download and unarchive github runner
+  ansible.builtin.unarchive:
+    src: https://github.com/actions/runner/releases/download/v2.285.1/actions-runner-linux-x64-2.285.1.tar.gz
+    dest: "{{ github_runner_location }}"
+    remote_src: yes
+
+- name: Set directory permissions
+  file:
+    path: "{{ github_runner_location }}"
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+    mode: u=rwx,g=rwx,o=r,g+s
+    state: directory
+    recurse: yes
+
+- name: Register runner
+  command: ./config.sh --url {{ github_repo }} --token {{ runner_token }} --name {{ app_name }}-runner --work {{ default_directory }}/{{ app_name }} --runnergroup default --labels {{ app_environment }} --runasservice
+  args:
+    chdir: "{{ github_runner_location }}"
+  become: yes
+  become_user: "{{ app_name }}"
+
+- name: Install runner
+  command: bash svc.sh install {{ app_name }}
+  args:
+    chdir: "{{ github_runner_location }}"
+
+- name: Start runner
+  command: bash svc.sh start
+  args:
+    chdir: "{{ github_runner_location }}"

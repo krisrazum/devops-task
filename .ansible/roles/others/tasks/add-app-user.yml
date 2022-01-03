@@ -1,0 +1,61 @@
+- name: Add app user
+  ansible.builtin.user:
+    name: "{{ app_name }}"
+    shell: /bin/bash
+    append: no
+
+- name: Create {{ app_name }} user .ssh folder
+  file:
+    path: /home/{{ app_name}}/.ssh/
+    state: directory
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+    mode: 0700
+
+- name: Create {{ ansible_user }} user .ssh folder
+  file:
+    path: /home/{{ ansible_user }}/.ssh/
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0700
+
+- name: Create {{ app_name }} user authorized_keys
+  ansible.builtin.file:
+    path: /home/{{ app_name}}/.ssh/authorized_keys
+    state: touch    
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+    mode: 0644
+
+- name: Create {{ ansible_user }} user authorized_keys
+  ansible.builtin.file:
+    path: /home/{{ ansible_user }}/.ssh/authorized_keys
+    state: touch
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+
+- name: Pull bmijac pub key
+  command: curl https://github.com/bmijac.keys
+  register: bmijac_pub_key
+
+- name: Pull krisrazum pub key
+  command: curl https://github.com/krisrazum.keys
+  register: krisrazum_pub_key
+
+- name: Append both keys to authorized_keys on {{ app_name }} user
+  lineinfile:
+    line: "{{ item }}"
+    path: "/home/{{ app_name}}/.ssh/authorized_keys"
+  loop:
+    - "{{ bmijac_pub_key.stdout }}"
+    - "{{ krisrazum_pub_key.stdout }}"
+
+- name: Append both keys to authorized_keys to {{ ansible_user }} user
+  lineinfile:
+    line: "{{ item }}"
+    path: "/home/{{ ansible_user }}/.ssh/authorized_keys"
+  loop:
+    - "{{ bmijac_pub_key.stdout }}"
+    - "{{ krisrazum_pub_key.stdout }}"

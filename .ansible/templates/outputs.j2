@@ -1,0 +1,20 @@
+
+
+
+
+URL: https://{{ app_domain }}
+Basic Auth Username: {{ app_name }}
+Basic Auth Password: {{ htpasswd_pass }}
+Virtual Host Location: /etc/nginx/sites-enabled/{{ app_domain }}
+Document Root: {{ default_directory }}/{{ app_name }}
+Postgres Admin Username: postgres
+Postgres Admin Password: {{ postgres_superuser_password }}
+Postgres Application Username: {{ app_name }}
+Postgres Application Password: {{ postgres_user_password }}
+Postgres Application Database: {{ app_name }}
+Postgres Host: {{ db_host }}:{{ db_port }}
+Application SSH User: {{ app_name }}
+
+
+
+

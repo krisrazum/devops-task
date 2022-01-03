@@ -1,0 +1,4 @@
+---
+npm_binary: /usr/bin/npm
+default_directory: /apps
+app_environment: development

@@ -1,0 +1,55 @@
+---
+
+- name: Generate postgres user password
+  set_fact:
+    postgres_superuser_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters') }}"
+
+- name: Generate postgres app user password
+  set_fact:
+    postgres_user_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters') }}"
+
+- name: Pull PostgreSQL image
+  docker_image:
+    name: '{{ postgres_docker_image }}'
+    tag: '{{ postgres_docker_image_tag }}'
+
+- name: Run PostgreSQL container
+  docker_container:
+    name: '{{ postgres_container_name }}'
+    image: '{{ postgres_docker_image }}:{{ postgres_docker_image_tag }}'
+    restart_policy: always
+    state: started
+    memory: '{{ container_memory_limit | default(omit) }}'
+    volumes:
+      - /opt/postgresdata/:/var/lib/postgresql/data
+    ports:
+      - '{{ db_host }}:{{ db_port }}:{{ db_port }}'
+    networks: '{{ postgres_networks }}'
+    env:
+      POSTGRES_PASSWORD: "{{ postgres_superuser_password }}"
+  register: postgres_container
+
+- name: Wait until PostgreSQL starts up
+  wait_for: port={{ db_port }} delay=5
+  when: postgres_container.changed
+
+- name: Create {{ postgres_user }} user
+  postgresql_user: >
+    name={{ postgres_user }}
+    password={{ postgres_user_password }}
+    role_attr_flags=CREATEDB,SUPERUSER,LOGIN
+    login_host=localhost
+    login_password={{ postgres_superuser_password }}
+    port={{ db_port }}
+  when: postgres_user is defined and postgres_user_password is defined
+
+- name: Create {{ postgres_database }} database
+  postgresql_db: >
+    name={{ postgres_database }}
+    owner={{ postgres_user }}
+    login_host=localhost
+    login_password={{ postgres_superuser_password }}
+    port={{ db_port }}
+    target={{ postgres_schema | default(omit) }}
+    state={{ (postgres_schema is defined) | ternary('restore', omit) }}
+  when: postgres_database is defined and postgres_user is defined

@@ -1,0 +1,2 @@
+[targets]
+1.1.1.1   ansible_connection=ssh   ansible_user=XXX   ansible_ssh_pass=XXX   ansible_sudo_pass=XXX

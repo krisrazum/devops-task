@@ -1,0 +1,10 @@
+---
+postgres_docker_image: postgres
+postgres_docker_image_tag: "12"
+postgres_container_name: "{{ app_name }}"
+db_port: 5432
+postgres_networks: null
+container_memory_limit: null
+postgres_user: "{{ app_name }}"
+postgres_database: "{{ app_name }}"
+db_host: "127.0.0.1"

@@ -1,0 +1,28 @@
+- name: Run update
+  apt:
+    update_cache: yes
+
+- name: Install packages needed for bunch of stuff
+  apt:
+    pkg:
+      - unzip 
+      - python3-certbot-nginx
+      - npm
+      - acl
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install "pm2" process manager
+  community.general.npm:
+    name: pm2
+    global: yes
+
+- name: Certbot cronjob for auto SSL renewal
+  cron: name=letsencrypt_renewal special_time=weekly job="/usr/bin/certbot renew --post-hook 'service nginx reload'"
+  notify: Reload Nginx
+
+- name: Applying hardened SSHD config
+  template:
+    src: "templates/sshd_config"
+    dest: "/etc/ssh/sshd_config"
+  notify: Reload sshd

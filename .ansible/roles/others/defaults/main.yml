@@ -1,0 +1,3 @@
+---
+github_runner_location: /opt/github-runner/
+github_repo: https://github.com/krisrazum/devops-task

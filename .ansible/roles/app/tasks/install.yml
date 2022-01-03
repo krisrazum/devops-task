@@ -1,0 +1,42 @@
+- name: Create directories for application
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0770'
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+  loop:
+    - "{{ default_directory }}"
+    - "{{ default_directory }}/{{ app_name }}"
+
+- name: Clone a repository
+  ansible.builtin.git:
+    repo: {{ github_repo }}.git
+    dest: "{{ default_directory }}/{{ app_name }}"
+
+- name: Install packages based on package.json
+  community.general.npm:
+    path: "{{ default_directory }}/{{ app_name }}"
+    executable: "{{ npm_binary }}"
+    state: present
+
+- name: Copy populated .env
+  template:
+    src: "templates/.env.example"
+    dest: "{{ default_directory }}/{{ app_name }}/.env.{{ app_environment }}"
+
+- name: Set directory permissions
+  file:
+    path: "{{ default_directory }}/{{ app_name }}"
+    owner: "{{ app_name }}"
+    group: "{{ app_name }}"
+    mode: u=rwx,g=rwx,o=r,g+s
+    state: directory
+    recurse: yes
+  notify: "{{ item }}"
+  loop:
+    - "Execute Migrations"
+    - "Execute DBSeed"
+    - "Start Application"
+    - "Reload Nginx"
+

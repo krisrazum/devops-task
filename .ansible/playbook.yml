@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  vars_prompt:
+    - name: "app_name"
+      prompt: "App name? e.g 'arsfutura'"
+      private: no
+    - name: "app_domain"
+      prompt: "App domain? e.g 'arsfutura.com'"
+      private: no 
+    - name: "runner_token"
+      prompt: "GitHub Runner Token?"
+      private: yes
+
+  roles:
+    - role: others
+    - role: postgres
+    - role: nginx
+    - role: app
+
+  post_tasks:
+    - name: Output for documentation
+      pause:
+        seconds: 5
+        prompt: "{{ lookup('template', 'templates/outputs.j2') }}"
