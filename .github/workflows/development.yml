@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: devops-task-runner
+    runs-on: development
 
     steps:
       - name: Run a multi-line script
