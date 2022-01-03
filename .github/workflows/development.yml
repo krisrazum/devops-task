@@ -6,15 +6,13 @@ on:
   pull_request:
     branches: [ master ]
 
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: development
 
     steps:
-      - name: Run a multi-line script
+      - name: Deploy to development
         run: |
            git pull
            npm install
-           pm2 start devops-task
+           pm2 restart devops-task
