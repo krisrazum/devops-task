@@ -19,7 +19,7 @@
 
 - name: Certbot cronjob for auto SSL renewal
   cron: name=letsencrypt_renewal special_time=weekly job="/usr/bin/certbot renew --post-hook 'service nginx reload'"
-  notify: Reload Nginx
+  notify: Reload Cron
 
 - name: Applying hardened SSHD config
   template:
