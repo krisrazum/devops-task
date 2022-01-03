@@ -1,0 +1,20 @@
+name: devops-task
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: devops-task-runner
+
+    steps:
+      - name: Run a multi-line script
+        run: |
+           git pull
+           npm install
+           pm2 start devops-task
