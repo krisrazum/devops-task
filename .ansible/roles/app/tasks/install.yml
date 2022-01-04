@@ -39,4 +39,5 @@
     - "Execute DBSeed"
     - "Start Application"
     - "Reload Nginx"
+    - "Saving the app list to be restored at reboot"
 
