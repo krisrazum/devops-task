@@ -13,7 +13,6 @@
     state: link
   notify: Reload Nginx
 
-
 - name: Issue letsencrypt certificate
   command: certbot -d {{ app_domain }} --non-interactive --agree-tos -m {{ certbot_renew_email }} --{{ certbot_plugin }}
 
