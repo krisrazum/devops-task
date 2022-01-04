@@ -42,6 +42,23 @@ After defining needed variables playbook will execute roles in following order :
 3. "Nginx"
 4. "App"
 
+After all roles have been executed, playbook  will present you with output at the end of execution.
+Output will be similar to this : 
+```sh
+URL: https://test.com
+Basic Auth Username: devops-task
+Basic Auth Password: QAShSfhkosbQ
+Virtual Host Location: /etc/nginx/sites-enabled/test.com
+Document Root: /apps/devops-task
+Postgres Admin Username: postgres
+Postgres Admin Password: afBCjjFHKxys
+Postgres Application Username: devops-task
+Postgres Application Password: JsguKtksjTji
+Postgres Application Database: devops-task
+Postgres Host: 127.0.0.1:5432
+Application SSH User: devops-task
+```
+
 ## Others Role
 
 Defaults:
